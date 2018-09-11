@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 module Mongoid
   module Association
@@ -210,7 +211,8 @@ module Mongoid
           #
           # @since 2.0.0.beta.1
           def initialize(base, target, association)
-            init(base, HasMany::Targets::Enumerable.new(target), association) do
+            enum = HasMany::Targets::Enumerable.new(target, base, association)
+            init(base, enum, association) do
               raise_mixed if klass.embedded? && !klass.cyclic?
             end
           end
@@ -455,10 +457,10 @@ module Mongoid
           # @since 3.0.0
           def persist_delayed(docs, inserts)
             unless docs.empty?
-              collection.insert_many(inserts)
+              collection.insert_many(inserts, session: _session)
               docs.each do |doc|
                 doc.new_record = false
-                doc.run_after_callbacks(:create, :save)
+                doc.run_after_callbacks(:create, :save) unless _association.autosave?
                 doc.post_persist
               end
             end

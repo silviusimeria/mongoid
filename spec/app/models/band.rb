@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Band
   include Mongoid::Document
   include Mongoid::Attributes::Dynamic
@@ -20,6 +22,7 @@ class Band
 
   embeds_many :records, cascade_callbacks: true
   embeds_many :notes, as: :noteable, cascade_callbacks: true, validate: false
+  embeds_many :labels
   embeds_one :label, cascade_callbacks: true
 
   has_many :same_name, class_name: 'Agent', inverse_of: :same_name

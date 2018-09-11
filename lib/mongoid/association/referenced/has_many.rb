@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'mongoid/association/referenced/has_many/binding'
 require 'mongoid/association/referenced/has_many/buildable'
 require 'mongoid/association/referenced/has_many/proxy'
@@ -240,6 +242,8 @@ module Mongoid
         def query_criteria(object, base)
           crit = klass.where(foreign_key => object)
           crit = with_polymorphic_criterion(crit, base)
+          crit.association = self
+          crit.parent_document = base
           with_ordering(crit)
         end
 

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 require "mongoid/changeable"
 require "mongoid/findable"
@@ -84,6 +85,7 @@ module Mongoid
       Validatable,
       Equality,
       Association::Referenced::Syncable,
+      Association::Macros,
       ActiveModel::Model,
       ActiveModel::Validations
     ]

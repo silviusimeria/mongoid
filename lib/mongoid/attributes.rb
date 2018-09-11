@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 require "active_model/attribute_methods"
 require "mongoid/attributes/dynamic"
@@ -29,7 +30,7 @@ module Mongoid
     #
     # @since 1.0.0
     def attribute_present?(name)
-      attribute = read_attribute(name)
+      attribute = read_raw_attribute(name)
       !attribute.blank? || attribute == false
     rescue ActiveModel::MissingAttributeError
       false
@@ -92,21 +93,15 @@ module Mongoid
     #
     # @since 1.0.0
     def read_attribute(name)
-      normalized = database_field_name(name.to_s)
-      if attribute_missing?(normalized)
-        raise ActiveModel::MissingAttributeError, "Missing attribute: '#{name}'."
-      end
-      if hash_dot_syntax?(normalized)
-        attributes.__nested__(normalized)
-      else
-        attributes[normalized]
-      end
+      field = fields[name.to_s]
+      raw = read_raw_attribute(name)
+      field ? field.demongoize(raw) : raw
     end
     alias :[] :read_attribute
 
     # Read a value from the attributes before type cast. If the value has not
     # yet been assigned then this will return the attribute's existing value
-    # using read_attribute.
+    # using read_raw_attribute.
     #
     # @example Read an attribute before type cast.
     #   person.read_attribute_before_type_cast(:price)
@@ -122,7 +117,7 @@ module Mongoid
       if attributes_before_type_cast.key?(attr)
         attributes_before_type_cast[attr]
       else
-        read_attribute(attr)
+        read_raw_attribute(attr)
       end
     end
 
@@ -291,6 +286,20 @@ module Mongoid
     # @since 1.0.0
     def typed_value_for(key, value)
       fields.key?(key) ? fields[key].mongoize(value) : value.mongoize
+    end
+
+    private
+
+    def read_raw_attribute(name)
+      normalized = database_field_name(name.to_s)
+      if attribute_missing?(normalized)
+        raise ActiveModel::MissingAttributeError, "Missing attribute: '#{name}'."
+      end
+      if hash_dot_syntax?(normalized)
+        attributes.__nested__(normalized)
+      else
+        attributes[normalized]
+      end
     end
 
     module ClassMethods

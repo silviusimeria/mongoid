@@ -1,7 +1,7 @@
 # Mongoid
 [![Build Status](https://travis-ci.org/mongodb/mongoid.svg?branch=master)](https://travis-ci.org/mongodb/mongoid)
 [![Code Climate](https://codeclimate.com/github/mongodb/mongoid.svg)](https://codeclimate.com/github/mongodb/mongoid)
-[![Dependency Status](https://www.versioneye.com/ruby/mongoid/4.0.0/badge.svg)](https://www.versioneye.com/ruby/mongoid/4.0.0)
+[![Dependency Status](https://www.versioneye.com/ruby/mongoid/badge.svg)](https://www.versioneye.com/ruby/mongoid)
 
 Mongoid is an ODM (Object-Document-Mapper) framework for MongoDB in Ruby.
 
@@ -13,7 +13,7 @@ Issues are now in the [Mongoid Jira project](https://jira.mongodb.org/browse/MON
 Project Tracking
 ----------------
 
-* [Mongoid Website and Documentation](http://mongoid.org)
+* [Mongoid Website and Documentation](http://www.mongoid.org)
 * [Mongoid Google Group](http://groups.google.com/group/mongoid)
 * [Stackoverflow](http://stackoverflow.com/questions/tagged/mongoid)
 * [#mongoid](http://webchat.freenode.net/?channels=mongoid) on freenode IRC

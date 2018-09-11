@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Mongoid::Persistable::Updatable do
@@ -462,7 +464,7 @@ describe Mongoid::Persistable::Updatable do
 
         it "raises an error" do
           expect {
-            person.update_attributes(map: { "bad.key" => "value" })
+            person.update_attributes(map: { "$bad.key" => "value" })
           }.to raise_error(Mongo::Error::OperationFailure)
         end
       end
@@ -498,7 +500,7 @@ describe Mongoid::Persistable::Updatable do
 
         it "raises an error" do
           expect {
-            person.send(method, map: { "bad.key" => "value" })
+            person.send(method, map: { "$bad.key" => "value" })
           }.to raise_error(Mongo::Error::OperationFailure)
         end
       end

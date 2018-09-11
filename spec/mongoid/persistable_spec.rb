@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Mongoid::Persistable do
@@ -52,16 +54,16 @@ describe Mongoid::Persistable do
       context "when not chaining the operations" do
 
         let(:operations) do
-          {
+          [{
             "$inc" => { "member_count" => 10 },
             "$bit" => { "likes" => { :and => 13 }},
             "$set" => { "name" => "Placebo" },
-            "$unset" => { "origin" => true }
-          }
+            "$unset" => { "origin" => true }},
+            { :session => nil } ]
         end
 
         before do
-          expect_any_instance_of(Mongo::Collection::View).to receive(:update_one).with(operations).and_call_original
+          expect_any_instance_of(Mongo::Collection::View).to receive(:update_one).with(*operations).and_call_original
         end
 
         let!(:update) do
@@ -79,16 +81,16 @@ describe Mongoid::Persistable do
       context "when chaining the operations" do
 
         let(:operations) do
-          {
+          [{
             "$inc" => { "member_count" => 10 },
             "$bit" => { "likes" => { :and => 13 }},
             "$set" => { "name" => "Placebo" },
-            "$unset" => { "origin" => true }
-          }
+            "$unset" => { "origin" => true } },
+            { :session => nil } ]
         end
 
         before do
-          expect_any_instance_of(Mongo::Collection::View).to receive(:update_one).with(operations).and_call_original
+          expect_any_instance_of(Mongo::Collection::View).to receive(:update_one).with(*operations).and_call_original
         end
 
         let!(:update) do
@@ -107,16 +109,16 @@ describe Mongoid::Persistable do
       context "when given multiple operations of the same type" do
 
         let(:operations) do
-          {
+         [{
             "$inc" => { "member_count" => 10, "other_count" => 10 },
             "$bit" => { "likes" => { :and => 13 }},
             "$set" => { "name" => "Placebo" },
-            "$unset" => { "origin" => true }
-          }
+            "$unset" => { "origin" => true }},
+            { :session => nil } ]
         end
 
         before do
-          expect_any_instance_of(Mongo::Collection::View).to receive(:update_one).with(operations).and_call_original
+          expect_any_instance_of(Mongo::Collection::View).to receive(:update_one).with(*operations).and_call_original
         end
 
         let!(:update) do
@@ -144,16 +146,16 @@ describe Mongoid::Persistable do
       context "when expecting the document to be yielded" do
 
         let(:operations) do
-          {
+          [{
             "$inc" => { "member_count" => 10 },
             "$bit" => { "likes" => { :and => 13 }},
             "$set" => { "name" => "Placebo" },
-            "$unset" => { "origin" => true }
-          }
+            "$unset" => { "origin" => true }},
+            { :session => nil } ]
         end
 
         before do
-          expect_any_instance_of(Mongo::Collection::View).to receive(:update_one).with(operations).and_call_original
+          expect_any_instance_of(Mongo::Collection::View).to receive(:update_one).with(*operations).and_call_original
         end
 
         let!(:update) do

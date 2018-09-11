@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 module Mongoid
   module Fields
@@ -6,6 +7,11 @@ module Mongoid
       # Validates the params passed to the field macro.
       module Macro
         extend self
+
+        # The warning message to give when a field is of type Symbol.
+        #
+        # @since 7.0.0
+        FIELD_TYPE_IS_SYMBOL = 'The BSON symbol type is deprecated; use String instead'.freeze
 
         OPTIONS = [
           :as,
@@ -103,6 +109,10 @@ module Mongoid
           options.keys.each do |option|
             if !OPTIONS.include?(option) && !Fields.options.include?(option)
               raise Errors::InvalidFieldOption.new(klass, name, option, OPTIONS)
+            end
+
+            if option == :type && options[option] == Symbol
+              Mongoid.logger.warn(FIELD_TYPE_IS_SYMBOL)
             end
           end
         end

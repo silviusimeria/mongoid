@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 module Mongoid
   module Clients
@@ -61,6 +62,7 @@ module Mongoid
         # @since 4.0.0
         def reset_storage_options!
           self.storage_options = storage_options_defaults.dup
+          PersistenceContext.clear(self)
         end
 
         # Get the default storage options.

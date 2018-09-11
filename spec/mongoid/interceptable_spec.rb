@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Mongoid::Interceptable do
@@ -526,7 +528,9 @@ describe Mongoid::Interceptable do
           end
 
           after(:all) do
-            Band.reset_callbacks(:rearrange)
+            # ActiveSupport may raise an error when trying to reset callbacks on all of Band's
+            # descendants, regardless of whether they have a particular callback defined.
+            begin; Band.reset_callbacks(:rearrange); rescue; end
           end
 
           let(:attributes) do

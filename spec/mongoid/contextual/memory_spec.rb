@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Mongoid::Contextual::Memory do
@@ -984,6 +986,25 @@ describe Mongoid::Contextual::Memory do
           context.pluck(:foo, :bar)
         }.to raise_exception(Mongoid::Errors::InMemoryCollationNotSupported)
       end
+    end
+  end
+
+  describe '#inc' do
+
+    let(:criteria) do
+      Address.all.tap do |crit|
+        crit.documents = [ Address.new(number: 1),
+                           Address.new(number: 2),
+                           Address.new(number: 3) ]
+      end
+    end
+
+    let(:context) do
+      described_class.new(criteria)
+    end
+
+    it 'increases each member' do
+      expect(context.inc(number: 10).collect(&:number)).to eql([11, 12, 13])
     end
   end
 

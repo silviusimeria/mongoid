@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 module Mongoid
 
@@ -227,7 +228,7 @@ module Mongoid
     # @since 2.3.0
     def attribute_will_change!(attr)
       unless changed_attributes.key?(attr)
-        changed_attributes[attr] = read_attribute(attr).__deep_copy__
+        changed_attributes[attr] = read_raw_attribute(attr).__deep_copy__
       end
     end
 

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 require "mongoid/criteria/findable"
 require "mongoid/criteria/includable"
@@ -27,6 +28,7 @@ module Mongoid
     include Modifiable
     include Scopable
     include Clients::Options
+    include Clients::Sessions
     include Options
 
     # Static array used to check with method missing - we only need to ever

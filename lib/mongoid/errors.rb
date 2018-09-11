@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 require "mongoid/errors/mongoid_error"
 require "mongoid/errors/ambiguous_relationship"
@@ -20,6 +21,7 @@ require "mongoid/errors/invalid_persistence_option"
 require "mongoid/errors/invalid_relation"
 require "mongoid/errors/invalid_relation_option"
 require "mongoid/errors/invalid_scope"
+require "mongoid/errors/invalid_session_use"
 require "mongoid/errors/invalid_set_polymorphic_relation"
 require "mongoid/errors/invalid_storage_options"
 require "mongoid/errors/invalid_storage_parent"

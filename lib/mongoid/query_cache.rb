@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 module Mongoid
 
@@ -222,9 +223,11 @@ module Mongoid
           super
         else
           unless cursor = cached_cursor
-            server = read_or_server_selector.select_server(cluster)
-            cursor = CachedCursor.new(view, send_initial_query(server), server)
-            QueryCache.cache_table[cache_key] = cursor
+            read_with_retry do
+              server = server_selector.select_server(cluster)
+              cursor = CachedCursor.new(view, send_initial_query(server), server)
+              QueryCache.cache_table[cache_key] = cursor
+            end
           end
           cursor.each do |doc|
             yield doc
@@ -234,10 +237,6 @@ module Mongoid
       end
 
       private
-
-      def read_or_server_selector
-        respond_to?(:server_selector, true) ? server_selector : read
-      end
 
       def cached_cursor
         if limit

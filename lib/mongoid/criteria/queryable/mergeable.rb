@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 module Mongoid
   class Criteria
@@ -259,7 +260,9 @@ module Mongoid
         def prepare(field, operator, value)
           unless operator =~ /exists|type|size/
             value = value.__expand_complex__
-            serializer = serializers[field]
+            field = field.to_s
+            name = aliases[field] || field
+            serializer = serializers[name]
             value = serializer ? serializer.evolve(value) : value
           end
           selection = { operator => value }

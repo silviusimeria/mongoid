@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 module Mongoid
   module Contextual
@@ -23,7 +24,7 @@ module Mongoid
         #
         # @since 3.0.0
         def aggregates(field)
-          result = collection.find.aggregate(pipeline(field)).to_a
+          result = collection.find.aggregate(pipeline(field), session: _session).to_a
           if result.empty?
             { "count" => 0, "sum" => nil, "avg" => nil, "min" => nil, "max" => nil }
           else

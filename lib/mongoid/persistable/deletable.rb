@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 module Mongoid
   module Persistable
@@ -64,7 +65,9 @@ module Mongoid
         _parent.remove_child(self) if notifying_parent?(options)
         if _parent.persisted?
           selector = _parent.atomic_selector
-          _root.collection.find(selector).update_one(positionally(selector, atomic_deletes))
+          _root.collection.find(selector).update_one(
+              positionally(selector, atomic_deletes),
+              session: _session)
         end
         true
       end
@@ -80,7 +83,7 @@ module Mongoid
       #
       # @since 4.0.0
       def delete_as_root
-        collection.find(atomic_selector).delete_one
+        collection.find(atomic_selector).delete_one(session: _session)
         true
       end
 

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 module Mongoid
   module Association
@@ -8,7 +9,7 @@ module Mongoid
       module Batchable
         include Positional
 
-        # Insert new documents as a batch push ($pushAll). This ensures that
+        # Insert new documents as a batch push ($push with $each). This ensures that
         # all callbacks are run at the appropriate time and only 1 request is
         # made to the database.
         #
@@ -21,7 +22,7 @@ module Mongoid
         #
         # @since 3.0.0
         def batch_insert(docs)
-          execute_batch_insert(docs, "$pushAll")
+          execute_batch_push(docs)
         end
 
         # Clear all of the docs out of the relation in a single swipe.
@@ -38,7 +39,8 @@ module Mongoid
           pre_process_batch_remove(docs, :delete)
           unless docs.empty?
             collection.find(selector).update_one(
-                positionally(selector, "$unset" => { path => true })
+                positionally(selector, "$unset" => { path => true }),
+                session: _session
             )
             post_process_batch_remove(docs, :delete)
           end
@@ -58,7 +60,8 @@ module Mongoid
           removals = pre_process_batch_remove(docs, method)
           if !docs.empty?
             collection.find(selector).update_one(
-                positionally(selector, "$pullAll" => { path => removals })
+                positionally(selector, "$pullAll" => { path => removals }),
+                session: _session
             )
             post_process_batch_remove(docs, method)
           end
@@ -89,7 +92,7 @@ module Mongoid
             _base.delayed_atomic_sets.clear unless _assigning?
             docs = normalize_docs(docs).compact
             _target.clear and _unscoped.clear
-            inserts = execute_batch_insert(docs, "$set")
+            inserts = execute_batch_set(docs)
             add_atomic_sets(inserts)
           end
         end
@@ -116,30 +119,54 @@ module Mongoid
           end
         end
 
-        # Perform a batch persist of the provided documents with the supplied
-        # operation.
+        # Perform a batch persist of the provided documents with a $set.
         #
         # @api private
         #
-        # @example Perform a batch operation.
-        #   batchable.execute_batch(docs, "$set")
+        # @example Perform a batch $set.
+        #   batchable.execute_batch_set(docs)
         #
         # @param [ Array<Document> ] docs The docs to persist.
-        # @param [ String ] operation The atomic operation.
         #
         # @return [ Array<Hash> ] The inserts.
         #
-        # @since 3.0.0
-        def execute_batch_insert(docs, operation)
+        # @since 7.0.0
+        def execute_batch_set(docs)
           self.inserts_valid = true
           inserts = pre_process_batch_insert(docs)
           if insertable?
             collection.find(selector).update_one(
-                positionally(selector, operation => { path => inserts })
+                positionally(selector, '$set' => { path => inserts }),
+                session: _session
             )
             post_process_batch_insert(docs)
           end
           inserts
+        end
+
+        # Perform a batch persist of the provided documents with $push and $each.
+        #
+        # @api private
+        #
+        # @example Perform a batch push.
+        #   batchable.execute_batch_push(docs)
+        #
+        # @param [ Array<Document> ] docs The docs to persist.
+        #
+        # @return [ Array<Hash> ] The inserts.
+        #
+        # @since 7.0.0
+        def execute_batch_push(docs)
+          self.inserts_valid = true
+          pushes = pre_process_batch_insert(docs)
+          if insertable?
+            collection.find(selector).update_one(
+                positionally(selector, '$push' => { path => { '$each' => pushes } }),
+                session: _session
+            )
+            post_process_batch_insert(docs)
+          end
+          pushes
         end
 
         # Are we in a state to be able to batch insert?

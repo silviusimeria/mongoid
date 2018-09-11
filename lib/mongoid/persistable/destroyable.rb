@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 module Mongoid
   module Persistable
@@ -48,11 +49,7 @@ module Mongoid
         #
         # @since 1.0.0
         def destroy_all(conditions = nil)
-          selector = conditions || {}
-          documents = where(selector)
-          destroyed = documents.count
-          documents.each { |doc| doc.destroy }
-          destroyed
+          where(conditions || {}).destroy
         end
       end
     end

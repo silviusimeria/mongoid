@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 require "support/ruby_version"
 
@@ -42,13 +43,18 @@ module Mongoid
   PLATFORM_DETAILS = "mongoid-#{VERSION}".freeze
 
   # The minimum MongoDB version supported.
-  MONGODB_VERSION = "2.4.0"
+  MONGODB_VERSION = "2.6.0"
 
   # Sets the Mongoid configuration options. Best used by passing a block.
   #
   # @example Set up configuration options.
   #   Mongoid.configure do |config|
   #     config.connect_to("mongoid_test")
+  #
+  #     config.clients.default = {
+  #       hosts: ["localhost:27017"],
+  #       database: "mongoid_test",
+  #     }
   #   end
   #
   # @return [ Config ] The configuration object.

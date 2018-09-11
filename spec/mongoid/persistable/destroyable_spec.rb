@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Mongoid::Persistable::Destroyable do
@@ -219,6 +221,25 @@ describe Mongoid::Persistable::Destroyable do
         it "returns the number of documents removed" do
           expect(removed).to eq(1)
         end
+      end
+    end
+
+    context 'when the write concern is unacknowledged' do
+
+      before do
+        Person.create(title: 'miss')
+      end
+
+      let!(:removed) do
+        Person.with(write: { w: 0 }) { |klass| klass.destroy_all(title: "sir") }
+      end
+
+      it "removes the matching documents" do
+        expect(Person.where(title: 'miss').count).to eq(1)
+      end
+
+      it "returns 0" do
+        expect(removed).to eq(0)
       end
     end
 

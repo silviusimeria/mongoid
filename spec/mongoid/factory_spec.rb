@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Mongoid::Factory do
@@ -86,6 +88,17 @@ describe Mongoid::Factory do
 
       it "instantiates based on the provided class" do
         expect(person.title).to eq("Sir")
+      end
+    end
+
+    context "when the type is a symbol" do
+
+      let(:person) do
+        described_class.build(Person, { :_type => "Doctor" })
+      end
+
+      it "instantiates the subclass" do
+        expect(person.class).to eq(Doctor)
       end
     end
   end

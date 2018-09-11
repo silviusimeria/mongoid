@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Mongoid::Association::Macros do
@@ -18,6 +20,26 @@ describe Mongoid::Association::Macros do
   after do
     klass.relations.clear
     klass.validators.clear
+  end
+
+  describe 'Model loading' do
+
+    let(:model_associations) do
+      class TestModel
+        include Mongoid::Document
+        field :associations
+      end
+    end
+
+    after do
+      Object.send(:remove_const, :TestModel)
+    end
+
+    it 'prohibits the use of :associations as an attribute' do
+      expect {
+        model_associations
+      }.to raise_exception(Mongoid::Errors::InvalidField)
+    end
   end
 
   describe ".embedded_in" do

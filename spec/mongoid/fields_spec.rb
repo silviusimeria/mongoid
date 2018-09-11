@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Mongoid::Fields do
@@ -422,6 +424,21 @@ describe Mongoid::Fields do
         it "adds the field to the model" do
           expect(Band.fields["acceptable"]).to_not be_nil
         end
+      end
+    end
+
+    context "when the Symbol type is used" do
+
+      before do
+        expect(Mongoid.logger).to receive(:warn)
+      end
+
+      after do
+        Band.fields.delete("should_warn")
+      end
+
+      it "warns that the BSON symbol type is deprecated" do
+        Band.field :should_warn, type: Symbol
       end
     end
 

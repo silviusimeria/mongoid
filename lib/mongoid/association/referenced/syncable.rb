@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # encoding: utf-8
 module Mongoid
   module Association
@@ -81,7 +82,7 @@ module Mongoid
             adds, subs = new - (old || []), (old || []) - new
 
             # If we are autosaving we don't want a duplicate to get added - the
-            # $addToSet would run previously and then the $pushAll from the
+            # $addToSet would run previously and then the $push and $each from the
             # inverse on the autosave would cause this. We delete each id from
             # what's in memory in case a mix of id addition and object addition
             # had occurred.

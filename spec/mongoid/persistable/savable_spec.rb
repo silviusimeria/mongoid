@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 
 describe Mongoid::Persistable::Savable do
@@ -189,8 +191,8 @@ describe Mongoid::Persistable::Savable do
               "title" => "King",
               "name.first_name" => "Ryan"
             },
-            "$pushAll"=> {
-              "addresses" => [ { "_id" => address.id, "street" => "Bond St" } ]
+            "$push"=> {
+              "addresses" => { '$each' => [ { "_id" => address.id, "street" => "Bond St" } ] }
             }
           })
         end
